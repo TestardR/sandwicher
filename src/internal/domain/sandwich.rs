@@ -61,7 +61,7 @@ impl TryFrom<Vec<String>> for SandwichIngredients {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum SandwichType {
     Meat,
     Fish,
