@@ -1,6 +1,4 @@
-use crate::internal::domain::sandwich::{
-    SandwichType,
-};
+use crate::internal::domain::sandwich_type::SandwichType;
 
 pub struct CreateSandwich<'a> {
     name:  &'a str,

@@ -1,6 +1,7 @@
 #[cfg(test)]
 pub mod shared {
-    use crate::internal::domain::sandwich::{Sandwich, SandwichType};
+    use crate::internal::domain::sandwich::Sandwich;
+    use crate::internal::domain::sandwich_type::SandwichType;
 
     pub const SANDWICH_ID: &str = "sand-id";
     pub const SANDWICH_NAME: &str = "Hot dog";

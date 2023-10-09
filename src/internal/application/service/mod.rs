@@ -1,3 +1,3 @@
-mod sandwich_service;
+pub mod sandwich_service;
 
 

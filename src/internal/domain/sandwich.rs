@@ -1,72 +1,8 @@
-#[derive(Debug)]
-pub struct SandwichId(Option<String>);
+use crate::internal::domain::ingredients::SandwichIngredients;
+use crate::internal::domain::name::SandwichName;
+use crate::internal::domain::sandwich_id::SandwichId;
+use crate::internal::domain::sandwich_type::SandwichType;
 
-impl SandwichId {
-    pub fn value(&self) -> &Option<String> {
-        &self.0
-    }
-}
-
-impl TryFrom<String> for SandwichId {
-    type Error = &'static str;
-
-    fn try_from(id: String) -> Result<Self, Self::Error> {
-        if id.is_empty() {
-            Ok(Self(None))
-        } else {
-            Ok(Self(Some(id)))
-        }
-    }
-}
-
-#[derive(Debug)]
-pub struct SandwichName(String);
-
-impl SandwichName {
-    pub fn value(&self) -> &String {
-        &self.0
-    }
-}
-
-impl TryFrom<String> for SandwichName {
-    type Error = &'static str;
-
-    fn try_from(name: String) -> Result<Self, Self::Error> {
-        if name.is_empty() {
-            Err("Any sandwich must have a name")
-        } else {
-            Ok(Self(name))
-        }
-    }
-}
-
-#[derive(Debug)]
-pub struct SandwichIngredients(Vec<String>);
-
-impl SandwichIngredients {
-    pub fn value(&self) -> &Vec<String> {
-        &self.0
-    }
-}
-
-impl TryFrom<Vec<String>> for SandwichIngredients {
-    type Error = &'static str;
-
-    fn try_from(ingredients: Vec<String>) -> Result<Self, Self::Error> {
-        if ingredients.is_empty() {
-            Err("Any sandwich must have at least one ingredient")
-        } else {
-            Ok(Self(ingredients))
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
-pub enum SandwichType {
-    Meat,
-    Fish,
-    Veggie,
-}
 
 #[derive(Debug)]
 pub struct Sandwich {
