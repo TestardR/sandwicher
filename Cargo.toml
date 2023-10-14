@@ -7,6 +7,8 @@ edition = "2021"
 
 [dependencies]
 actix-web = "4.4.0"
-env_logger = "0.9.3"
+async-trait = "0.1.73"
+env_logger = "0.10.0"
 serde = { version = "1.0.188", features = ["derive"] }
-tokio = { version = "1.0.0", features = ["rt", "rt-multi-thread", "macros"] }
+serde_json = { version = "1.0.107", features = [] }
+sqlx = { version = "0.7.2", features = ["runtime-tokio", "sqlite"]}

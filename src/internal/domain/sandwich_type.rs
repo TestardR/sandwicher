@@ -5,4 +5,5 @@ pub enum SandwichType {
     Meat,
     Fish,
     Veggie,
+    Undefined
 }

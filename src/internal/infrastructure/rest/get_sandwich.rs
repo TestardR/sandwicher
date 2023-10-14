@@ -1,9 +1,10 @@
 use actix_web::web::{Data, Json, Path};
 use serde::{Deserialize, Serialize};
+
 use crate::internal::application::query::get_sandwich::GetSandwich;
 use crate::internal::application::service::sandwich_service::SandwichHandler;
 use crate::internal::domain::sandwich::Sandwich;
-use crate::internal::domain::sandwich_repository::GetError;
+use crate::internal::application::service::sandwich_service::GetError;
 use crate::internal::domain::sandwich_type::SandwichType;
 use crate::internal::infrastructure::rest::errors::ApiError;
 
@@ -14,7 +15,6 @@ pub struct GetSandwichResponse {
     pub ingredients: Vec<String>,
     pub sandwich_type: SandwichType,
 }
-
 
 impl From<Sandwich> for GetSandwichResponse {
     fn from(s: Sandwich) -> Self {

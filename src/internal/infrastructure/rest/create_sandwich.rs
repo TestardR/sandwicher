@@ -4,11 +4,11 @@ use crate::internal::domain::sandwich_type::SandwichType;
 use actix_web::web::{Data, Json};
 
 use crate::internal::application::command::create_sandwich::CreateSandwich;
-use crate::internal::application::service::sandwich_service::{SandwichHandler};
-use crate::internal::domain::sandwich_repository::{CreateError};
+use crate::internal::application::service::sandwich_service::SandwichHandler;
+use crate::internal::application::service::sandwich_service::CreateError;
 
 use crate::internal::infrastructure::rest::errors::ApiError;
-use crate::internal::infrastructure::rest::helpers::{string_vec_to_vec_str};
+use crate::internal::infrastructure::rest::helpers::string_vec_to_vec_str;
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct CreateSandwichRequest {

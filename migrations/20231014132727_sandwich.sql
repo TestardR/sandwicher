@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS sandwich
+(
+    id INTEGER PRIMARY KEY NOT NULL,
+    name VARCHAR(250) NOT NULL,
+    ingredients VARCHAR(250) NOT NULL,
+    sandwich_type VARCHAR(250) NOT NULL
+);

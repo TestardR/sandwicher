@@ -1,2 +1,2 @@
 pub mod rest;
-pub mod sandwich;
+pub mod store;
