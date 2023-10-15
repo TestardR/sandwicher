@@ -1,10 +1,8 @@
-use std::sync::Arc;
 use actix_web::{App, HttpResponse, HttpServer, web};
 use actix_web::middleware::Logger;
 use actix_web::web::Data;
 
 use crate::internal::application::service::sandwich_service::Service;
-use crate::internal::domain::sandwich_repository::SandwichRepository;
 use crate::internal::infrastructure::rest::create_sandwich::create_sandwich;
 use crate::internal::infrastructure::rest::get_sandwich::get_sandwich;
 use crate::internal::infrastructure::store::config::{connect_to_db};

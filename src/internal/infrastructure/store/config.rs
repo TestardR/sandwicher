@@ -4,7 +4,7 @@ const DB_URL: &str = "sqlite://sqlite.db";
 pub async fn connect_to_db() -> Pool<Sqlite> {
     if !Sqlite::database_exists(DB_URL).await.unwrap_or(false) {
         match Sqlite::create_database(DB_URL).await {
-            Ok(db) => println!("Create db success"),
+            Ok(_) => println!("Create db success"),
             Err(error) => panic!("error: {}", error),
         }
     }

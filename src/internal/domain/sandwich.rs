@@ -1,4 +1,3 @@
-use std::fmt::Error;
 use crate::internal::domain::add_sandwich_change::{AddSandwichChange, new_add_sandwich_change};
 use crate::internal::domain::errors::DomainViolation;
 use crate::internal::domain::name::SandwichName;

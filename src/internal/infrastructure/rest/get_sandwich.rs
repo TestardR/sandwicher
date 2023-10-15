@@ -27,14 +27,21 @@ pub async fn get_sandwich<T: SandwichHandler>(
     path: Path<String>,
 ) -> Result<Json<GetSandwichResponse>, ApiError>
 {
-    let query = GetSandwich::new(path.into_inner().parse::<i64>().unwrap());
-    let result = handler.handle_get_sandwich(query).await;
-
+    let result = path.into_inner().parse::<i64>();
     match result {
-        Ok(sandwich) => Ok(Json(GetSandwichResponse::from(sandwich))),
-        Err(e) => match e {
-            GetError::NotFound => Err(ApiError::BadRequest(String::from("No sandwich found with the specified criteria"))),
-            GetError::Unknown(e) => Err(ApiError::InternalServerError(e)),
-        }
+        Ok(id) => {
+            let query = GetSandwich::new(id);
+            let result = handler.handle_get_sandwich(query).await;
+
+            match result {
+                Ok(sandwich) => Ok(Json(GetSandwichResponse::from(sandwich))),
+                Err(e) => match e {
+                    GetError::NotFound => Err(ApiError::BadRequest(String::from("No sandwich found with the specified criteria"))),
+                    GetError::Unknown(e) => Err(ApiError::InternalServerError(e)),
+                }
+            }
+        },
+        Err(e) => Err(ApiError::BadRequest(format!("Sandwich id must be an integer: {}", e))),
     }
+
 }
