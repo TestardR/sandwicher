@@ -1,15 +1,14 @@
 use sqlx::{migrate::MigrateDatabase, Pool, Sqlite, SqlitePool};
-const DB_URL: &str = "sqlite://sqlite.db";
 
-pub async fn connect_to_db() -> Pool<Sqlite> {
-    if !Sqlite::database_exists(DB_URL).await.unwrap_or(false) {
-        match Sqlite::create_database(DB_URL).await {
+pub async fn connect_to_db(db_url: String) -> Pool<Sqlite> {
+    if !Sqlite::database_exists(&db_url).await.unwrap_or(false) {
+        match Sqlite::create_database(&db_url).await {
             Ok(_) => println!("Create db success"),
             Err(error) => panic!("error: {}", error),
         }
     }
 
-    let db = SqlitePool::connect(DB_URL).await.unwrap();
+    let db = SqlitePool::connect(&db_url).await.unwrap();
 
     let crate_dir = std::env::var("CARGO_MANIFEST_DIR").unwrap();
     let migrations = std::path::Path::new(&crate_dir).join("./migrations");
@@ -18,6 +17,7 @@ pub async fn connect_to_db() -> Pool<Sqlite> {
         .unwrap()
         .run(&db)
         .await;
+
     match migration_results {
         Ok(_) => println!("Migration success"),
         Err(error) => {
