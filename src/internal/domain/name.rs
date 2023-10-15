@@ -1,9 +1,9 @@
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct SandwichName(String);
 
 impl SandwichName {
-    pub fn new(field0: String) -> Self {
-        Self(field0)
+    pub fn new(name: String) -> Self {
+        Self(name)
     }
 
     pub fn value(&self) -> &String {

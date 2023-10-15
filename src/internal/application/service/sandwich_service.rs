@@ -1,4 +1,3 @@
-use std::sync::Arc;
 use async_trait::async_trait;
 
 use crate::internal::application::command::create_sandwich::CreateSandwich;
@@ -67,32 +66,56 @@ impl<T: SandwichRepository + Sync + Send> SandwichHandler for Service<T> {
     }
 }
 
-// #[cfg(test)]
-// mod tests {
-//     use crate::test_shared::utils::shared::{SANDWICH_NAME, SANDWICH_TYPE, string_vec_to_vec_str, stub_ingredients};
-//     use super::*;
-//
-//     #[test]
-//     fn should_create_the_expected_sandwich() {
-//         let sandwich_service = Service::new();
-//         let ingredients = &stub_ingredients();
-//         let ingredients = string_vec_to_vec_str(&ingredients);
-//         let create_sandwich_command = CreateSandwich::new(SANDWICH_NAME, &ingredients, &SANDWICH_TYPE);
-//
-//         assert_eq!(sandwich_service.handle_create_sandwich(create_sandwich_command).is_err(), false);
-//     }
-//
-//     #[test]
-//     fn should_get_the_expected_sandwich() {
-//         let sandwich_service = Service::new();
-//         let get_sandwich_query = GetSandwich::new("123");
-//
-//         match sandwich_service.handle_get_sandwich(get_sandwich_query) {
-//             Ok(s) => assert_eq!(s.id().value().clone().unwrap(), "123".to_string()),
-//             Err(_) => unreachable!()
-//         }
-//     }
-// }
+#[cfg(test)]
+mod tests {
+    use crate::internal::domain::add_sandwich_change::AddSandwichChange;
+    use super::*;
+
+    const SANDWICH_ID: i64 = 1;
+    const SANDWICH_NAME: &str = "Hot dog";
+
+    struct SandwichStoreMock {}
+
+    #[async_trait]
+    impl SandwichRepository for SandwichStoreMock {
+        async fn find_sandwich(&self, sandwich_id: SandwichId) -> Result<Sandwich, RepoFindError> {
+            Ok(Sandwich::new(
+                SandwichId::new(SANDWICH_ID),
+                SandwichName::new(String::from(SANDWICH_NAME)),
+            ))
+        }
+
+        async fn add_sandwich(&self, change: AddSandwichChange) -> Result<(), RepoAddError> {
+            Ok(())
+        }
+    }
+
+    #[actix_rt::test]
+    async fn should_create_the_expected_sandwich() {
+        let store_mock = SandwichStoreMock {};
+        let sandwich_service = Service::new(store_mock);
+
+        let create_sandwich_command = CreateSandwich::new(String::from(SANDWICH_NAME));
+
+        assert_eq!(sandwich_service.handle_create_sandwich(create_sandwich_command).await.is_err(), false);
+    }
+
+    #[actix_rt::test]
+    async fn should_get_the_expected_sandwich() {
+        let store_mock = SandwichStoreMock {};
+        let sandwich_service = Service::new(SANDWICH_ID);
+        let get_sandwich_query = GetSandwich::new(123);
+        let expected_sandwich = Sandwich::new(
+            SandwichId::new(SANDWICH_ID),
+            SandwichName::new(String::from(SANDWICH_NAME)),
+        );
+
+        match sandwich_service.handle_get_sandwich(get_sandwich_query).await {
+            Ok(actual_sandwich) => assert_eq!(actual_sandwich, expected_sandwich),
+            Err(_) => unreachable!()
+        }
+    }
+}
 
 
 

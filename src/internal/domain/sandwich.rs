@@ -4,7 +4,7 @@ use crate::internal::domain::errors::DomainViolation;
 use crate::internal::domain::name::SandwichName;
 use crate::internal::domain::sandwich_id::SandwichId;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Sandwich {
     id: SandwichId,
     name: SandwichName,
@@ -56,7 +56,7 @@ mod tests {
             SandwichName::new(SANDWICH_NAME.to_string())
         );
 
-        assert_eq!(hot_dog.id().value(), SANDWICH_ID);
+        assert_eq!(*hot_dog.id().value(), SANDWICH_ID);
         assert_eq!(hot_dog.name().value(), SANDWICH_NAME);
     }
 }
