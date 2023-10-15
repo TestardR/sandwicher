@@ -2,6 +2,10 @@
 pub struct SandwichName(String);
 
 impl SandwichName {
+    pub fn new(field0: String) -> Self {
+        Self(field0)
+    }
+
     pub fn value(&self) -> &String {
         &self.0
     }

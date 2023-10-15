@@ -1,42 +1,23 @@
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
-
+use crate::internal::domain::name::SandwichName;
 use crate::internal::domain::sandwich::Sandwich;
-use crate::internal::domain::sandwich_type::SandwichType;
+use crate::internal::domain::sandwich_id::SandwichId;
 
 #[derive(Debug, Clone, Serialize, Deserialize, FromRow)]
 pub struct SandwichEntity {
     id: i64,
     name: String,
-    ingredients: Vec<String>,
-    sandwich_type: SandwichType,
 }
 
-impl From<Sandwich> for SandwichEntity {
-    fn from(sandwich: Sandwich) -> Self {
-        let id = match sandwich.id().value() {
-            Some(id) => id,
-            None => ""
-        };
+impl SandwichEntity {
+    pub fn from_entity_to_domain_model(&self) -> Sandwich {
+        let entity_id = &self.id;
+        let entity_name = &self.name;
+        let id = SandwichId::new(*entity_id);
+        let name = SandwichName::new(entity_name.to_string());
 
-        let entity = SandwichEntity {
-            id: id.parse::<i64>().unwrap(),
-            name: sandwich.name().value().to_string(),
-            ingredients: sandwich.ingredients().value().clone(),
-            sandwich_type: sandwich.sandwich_type().clone(),
-        };
-
-        entity
+        Sandwich::new(id, name)
     }
 }
 
-impl TryInto<Sandwich> for SandwichEntity {
-    type Error = String;
-    fn try_into(self) -> Result<Sandwich, Self::Error> {
-        Sandwich::new(self.id.to_string(),
-                      self.name,
-                      self.ingredients,
-                      self.sandwich_type,
-                      )
-    }
-}

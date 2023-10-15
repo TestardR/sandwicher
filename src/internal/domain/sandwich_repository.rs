@@ -1,21 +1,24 @@
 use async_trait::async_trait;
+use crate::internal::domain::add_sandwich_change::AddSandwichChange;
+
 use crate::internal::domain::sandwich::Sandwich;
 use crate::internal::domain::sandwich_id::SandwichId;
 
+
 #[derive(Debug)]
-pub enum RepoCreateError {
-    InvalidData(String),
-    Unknown(String)
+pub enum RepoFindError {
+    Unknown(String),
+    NotFound,
 }
 
 #[derive(Debug)]
-pub enum RepoGetError {
-    NotFound,
-    Unknown(String)
+pub enum RepoAddError {
+    Unknown(String),
 }
 
 #[async_trait]
-pub trait Repository {
-    async fn create(&self, sandwich: Sandwich) -> Result<(), RepoCreateError>;
-    async fn find_one(&self, sandwich_d: SandwichId) -> Result<Sandwich, RepoGetError>;
+pub trait SandwichRepository {
+    async fn find_sandwich(&self, sandwich_d: SandwichId) -> Result<Sandwich, RepoFindError>;
+
+    async fn add_sandwich(&self, add_sandwich_change: AddSandwichChange) -> Result<(), RepoAddError>;
 }

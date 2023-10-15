@@ -1,64 +1,68 @@
+use std::sync::Arc;
+use async_trait::async_trait;
+
 use crate::internal::application::command::create_sandwich::CreateSandwich;
 use crate::internal::application::query::get_sandwich::GetSandwich;
-use crate::internal::domain::sandwich::Sandwich;
+use crate::internal::domain::name::SandwichName;
+use crate::internal::domain::sandwich::{add_sandwich, Sandwich};
 use crate::internal::domain::sandwich_id::SandwichId;
-use crate::internal::domain::sandwich_repository::{RepoCreateError, RepoGetError, Repository};
+use crate::internal::domain::sandwich_repository::{RepoAddError, RepoFindError, SandwichRepository};
 
+#[async_trait]
 pub trait SandwichHandler {
-    fn handle_get_sandwich(&self, query: GetSandwich) -> Result<Sandwich, GetError>;
-    fn handle_create_sandwich(&self, command: CreateSandwich) -> Result<(), CreateError>;
+    async fn handle_get_sandwich(&self, query: GetSandwich) -> Result<Sandwich, GetError>;
+    async fn handle_create_sandwich(&self, command: CreateSandwich) -> Result<(), CreateError>;
 }
 
 #[derive(Debug)]
 pub enum CreateError {
+    DomainViolation(String),
     Unknown(String),
-    InvalidData(String),
 }
 
 #[derive(Debug)]
 pub enum GetError {
-    Unknown(String),
     NotFound,
+    Unknown(String),
 }
 
-#[derive(Clone)]
-pub struct Service<'a> {
-    sandwich_store: &'a dyn Repository,
+
+#[derive(Clone, Copy)]
+pub struct Service<T> {
+    sandwich_store: T,
 }
 
-impl<'a> Service<'a> {
-    pub fn new(sandwich_store: &'a dyn Repository) -> Self {
+impl<T: SandwichRepository> Service<T> {
+    pub fn new(sandwich_store: T) -> Self {
         Self { sandwich_store }
     }
 }
 
-impl SandwichHandler for Service {
-    fn handle_get_sandwich(&self, query: GetSandwich) -> Result<Sandwich, GetError> {
-        self.sandwich_store.find_one(SandwichId::try_from(query.id().to_string())?)
-            .map(|sandwich| {
-                Ok(sandwich)
-            })
-            .map_err(|e| match e {
-                RepoGetError::NotFound => GetError::NotFound,
-                e => GetError::Unknown(e.to_string()),
-            })?
-    }
-
-    fn handle_create_sandwich(&self, command: CreateSandwich) -> Result<(), CreateError> {
-        let ingredients = command.ingredients().iter().map(|item| item.to_string()).collect::<Vec<String>>();
-
-        let sandwich = Sandwich::new(
-            "".to_string(),
-            command.name().to_string(),
-            ingredients,
-            command.sandwich_type().clone(),
-        )?;
-
-        let result = self.sandwich_store.create(sandwich);
+#[async_trait]
+impl<T: SandwichRepository + Sync + Send> SandwichHandler for Service<T> {
+    async fn handle_get_sandwich(&self, query: GetSandwich) -> Result<Sandwich, GetError> {
+        let result = self.sandwich_store.find_sandwich(SandwichId::new(*query.id())).await;
 
         match result {
-            Ok(_) => Ok(()),
-            RepoCreateError::Unknown => CreateError::Unknown
+            Ok(sandwich) => Ok(sandwich),
+            Err(e) => match e {
+                RepoFindError::NotFound => Err(GetError::NotFound),
+                RepoFindError::Unknown(e) => Err(GetError::Unknown(e))
+            }
+        }
+    }
+
+    async fn handle_create_sandwich(&self, command: CreateSandwich) -> Result<(), CreateError> {
+        let result = add_sandwich(SandwichName::new(command.name().to_string()));
+
+        match result {
+            Ok(add_sandwich_change) => {
+                match self.sandwich_store.add_sandwich(add_sandwich_change).await {
+                    Ok(_) => Ok(()),
+                    Err(RepoAddError::Unknown(e)) => Err(CreateError::Unknown(e))
+                }
+            }
+            Err(e) => Err(CreateError::DomainViolation(e.to_string()))
         }
     }
 }

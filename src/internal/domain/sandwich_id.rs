@@ -1,23 +1,10 @@
 #[derive(Debug)]
-pub struct SandwichId(Option<String>);
+pub struct SandwichId(i64);
 
 impl SandwichId {
-    pub fn new(id: Option<String>) -> Self {
+    pub fn new(id: i64) -> Self {
         Self(id)
     }
-    pub fn value(&self) -> &Option<String> {
-        &self.0
-    }
-}
 
-impl TryFrom<String> for SandwichId {
-    type Error = &'static str;
-
-    fn try_from(id: String) -> Result<Self, Self::Error> {
-        if id.is_empty() {
-            Ok(Self(None))
-        } else {
-            Ok(Self(Some(id)))
-        }
-    }
+    pub fn value(&self) -> &i64 { &self.0 }
 }
