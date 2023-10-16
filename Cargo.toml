@@ -17,3 +17,7 @@ validator = { version = "0.16.1", features = ["derive"] }
 
 [dev-dependencies]
 actix-rt = "2.9.0"
+
+[profile.release]
+lto = true
+codegen-units = 1

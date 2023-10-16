@@ -20,7 +20,7 @@ async fn main() -> std::io::Result<()> {
 
     let config = Config::init_from_env().unwrap();
 
-    let sql_lite = connect_to_db(config.db_host).await;
+    let sql_lite = connect_to_db(config.db_host, config.db_migration_path).await;
     let sandwich_store= SandwichStore::new(sql_lite);
     let sandwich_service = Service::new(sandwich_store);
 
