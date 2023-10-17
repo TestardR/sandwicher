@@ -37,7 +37,7 @@ pub async fn get_sandwich<T: SandwichHandler>(
                 Ok(sandwich) => Ok(Json(GetSandwichResponse::from(sandwich))),
                 Err(e) => match e {
                     GetError::NotFound => Err(ApiError::BadRequest(String::from("No sandwich found with the specified criteria"))),
-                    GetError::Unknown(e) => Err(ApiError::InternalServerError(e)),
+                    GetError::Unknown(e) => Err(ApiError::InternalServerError(String::from("an error occurred"))),
                 }
             }
         },

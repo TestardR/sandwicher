@@ -31,7 +31,7 @@ pub async fn create_sandwich<T: SandwichHandler>(
         Ok(_) => Ok(Json(())),
         Err(e) => match e {
             CreateError::DomainViolation(e) => Err(ApiError::BadRequest(e)),
-            CreateError::Unknown(e) => Err(ApiError::InternalServerError(e)),
+            CreateError::Unknown(e) => Err(ApiError::InternalServerError(String::from("an error occurred"))),
         }
     }
 }

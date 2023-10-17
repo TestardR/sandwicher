@@ -1,0 +1,31 @@
+@startuml
+'https://plantuml.com/component-diagram
+
+package "Infrastructure - HTTP" #EB937F {
+   [HTTP GET Sandwich] as http_get_sandwich
+   [HTTP POST Sandwich] as http_post_sandwich
+}
+
+package "Application" #ADD1B2 {
+    http_get_sandwich ---> [Sandwich Service]
+    http_post_sandwich --> [Sandwich Service]
+}
+
+package "Domain" #B4A7E5 {
+    [Sandwich]
+
+    [Sandwich Service] --> [Sandwich]
+
+}
+
+package "Infrastructure - Persistence" #EB937F {
+     database "SqlLite" {
+          folder "sandwich" {
+            [name]
+             [id]
+          }
+}
+
+[Sandwich] -- [sandwich]
+
+@enduml

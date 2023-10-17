@@ -78,14 +78,14 @@ mod tests {
 
     #[async_trait]
     impl SandwichRepository for SandwichStoreMock {
-        async fn find_sandwich(&self, sandwich_id: SandwichId) -> Result<Sandwich, RepoFindError> {
+        async fn find_sandwich(&self, _sandwich_id: SandwichId) -> Result<Sandwich, RepoFindError> {
             Ok(Sandwich::new(
                 SandwichId::new(SANDWICH_ID),
                 SandwichName::new(String::from(SANDWICH_NAME)),
             ))
         }
 
-        async fn add_sandwich(&self, change: AddSandwichChange) -> Result<(), RepoAddError> {
+        async fn add_sandwich(&self, _change: AddSandwichChange) -> Result<(), RepoAddError> {
             Ok(())
         }
     }
@@ -103,7 +103,7 @@ mod tests {
     #[actix_rt::test]
     async fn should_get_the_expected_sandwich() {
         let store_mock = SandwichStoreMock {};
-        let sandwich_service = Service::new(SANDWICH_ID);
+        let sandwich_service = Service::new(store_mock);
         let get_sandwich_query = GetSandwich::new(123);
         let expected_sandwich = Sandwich::new(
             SandwichId::new(SANDWICH_ID),
