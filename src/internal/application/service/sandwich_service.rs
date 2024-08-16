@@ -1,6 +1,6 @@
 use async_trait::async_trait;
 
-use crate::internal::application::command::create_sandwich::CreateSandwich;
+use crate::internal::application::command::add_sandwich::AddSandwich;
 use crate::internal::application::query::get_sandwich::GetSandwich;
 use crate::internal::domain::name::SandwichName;
 use crate::internal::domain::sandwich::{add_sandwich, Sandwich};
@@ -10,7 +10,7 @@ use crate::internal::domain::sandwich_repository::{RepoAddError, RepoFindError, 
 #[async_trait]
 pub trait SandwichHandler {
     async fn handle_get_sandwich(&self, query: GetSandwich) -> Result<Sandwich, GetError>;
-    async fn handle_create_sandwich(&self, command: CreateSandwich) -> Result<(), CreateError>;
+    async fn handle_add_sandwich(&self, command: AddSandwich) -> Result<(), CreateError>;
 }
 
 #[derive(Debug)]
@@ -51,7 +51,7 @@ impl<T: SandwichRepository + Sync + Send> SandwichHandler for Service<T> {
         }
     }
 
-    async fn handle_create_sandwich(&self, command: CreateSandwich) -> Result<(), CreateError> {
+    async fn handle_add_sandwich(&self, command: AddSandwich) -> Result<(), CreateError> {
         let result = add_sandwich(SandwichName::new(command.name().to_string()));
 
         match result {
@@ -91,13 +91,13 @@ mod tests {
     }
 
     #[actix_rt::test]
-    async fn should_create_the_expected_sandwich() {
+    async fn should_add_the_expected_sandwich() {
         let store_mock = SandwichStoreMock {};
         let sandwich_service = Service::new(store_mock);
 
-        let create_sandwich_command = CreateSandwich::new(String::from(SANDWICH_NAME));
+        let create_sandwich_command = AddSandwich::new(String::from(SANDWICH_NAME));
 
-        assert_eq!(sandwich_service.handle_create_sandwich(create_sandwich_command).await.is_err(), false);
+        assert_eq!(sandwich_service.handle_add_sandwich(create_sandwich_command).await.is_err(), false);
     }
 
     #[actix_rt::test]

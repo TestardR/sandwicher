@@ -1,9 +1,9 @@
 #[derive(Debug)]
-pub struct CreateSandwich {
+pub struct AddSandwich {
     name:  String
 }
 
-impl CreateSandwich {
+impl AddSandwich {
     pub fn new(
         name: String,
     ) -> Self {

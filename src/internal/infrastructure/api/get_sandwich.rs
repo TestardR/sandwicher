@@ -5,7 +5,7 @@ use crate::internal::application::query::get_sandwich::GetSandwich;
 use crate::internal::application::service::sandwich_service::SandwichHandler;
 use crate::internal::domain::sandwich::Sandwich;
 use crate::internal::application::service::sandwich_service::GetError;
-use crate::internal::infrastructure::rest::errors::ApiError;
+use crate::internal::infrastructure::api::errors::ApiError;
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct GetSandwichResponse {

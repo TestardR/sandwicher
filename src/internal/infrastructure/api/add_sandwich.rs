@@ -2,10 +2,10 @@ use serde::{Deserialize, Serialize};
 use actix_web::web::{Data, Json};
 use validator::Validate;
 
-use crate::internal::application::command::create_sandwich::CreateSandwich;
+use crate::internal::application::command::add_sandwich::AddSandwich;
 use crate::internal::application::service::sandwich_service::{CreateError, SandwichHandler};
-use crate::internal::infrastructure::rest::errors::ApiError;
-use crate::internal::infrastructure::rest::validate::validate;
+use crate::internal::infrastructure::api::errors::ApiError;
+use crate::internal::infrastructure::api::validate::validate;
 
 #[derive(Clone, Debug, Deserialize, Serialize, Validate)]
 pub struct CreateSandwichRequest {
@@ -16,7 +16,7 @@ pub struct CreateSandwichRequest {
     pub name: String,
 }
 
-pub async fn create_sandwich<T: SandwichHandler>(
+pub async fn add_sandwich<T: SandwichHandler>(
     request: Json<CreateSandwichRequest>,
     handler: Data<T>,
 ) -> Result<Json<()>, ApiError>
@@ -24,8 +24,8 @@ pub async fn create_sandwich<T: SandwichHandler>(
     validate(&request)?;
 
     let sandwich_name = &request.name;
-    let command = CreateSandwich::new(sandwich_name.to_string());
-    let result = handler.handle_create_sandwich(command).await;
+    let command = AddSandwich::new(sandwich_name.to_string());
+    let result = handler.handle_add_sandwich(command).await;
 
     match result {
         Ok(_) => Ok(Json(())),

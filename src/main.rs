@@ -5,8 +5,8 @@ use envconfig::Envconfig;
 
 use crate::config::config::Config;
 use crate::internal::application::service::sandwich_service::Service;
-use crate::internal::infrastructure::rest::create_sandwich::create_sandwich;
-use crate::internal::infrastructure::rest::get_sandwich::get_sandwich;
+use crate::internal::infrastructure::api::add_sandwich::add_sandwich;
+use crate::internal::infrastructure::api::get_sandwich::get_sandwich;
 use crate::internal::infrastructure::store::config::{connect_to_db};
 use crate::internal::infrastructure::store::sandwich_store::SandwichStore;
 
@@ -29,7 +29,7 @@ async fn main() -> std::io::Result<()> {
             .wrap(Logger::default())
             .app_data(Data::new(sandwich_service.clone()))
             .route("/healthz", web::get().to(HttpResponse::Ok))
-            .route("/sandwich", web::post().to(create_sandwich::<Service<SandwichStore>>))
+            .route("/sandwich", web::post().to(add_sandwich::<Service<SandwichStore>>))
             .route("/sandwich/{id}", web::get().to(get_sandwich::<Service<SandwichStore>>))
     })
         .bind((config.http_host, config.http_port))?
